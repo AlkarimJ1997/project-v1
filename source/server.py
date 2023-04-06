@@ -224,7 +224,7 @@ class Cracker:
                 found = False
                 password_generator = self.generate_passwords()
                 distribution_queue = queue.LifoQueue()
-                start_time = time.time()
+                total_time = 0
 
                 while not found:
                     ready_sockets, _, _ = select.select(fds, [], [], 0.1)
@@ -236,6 +236,7 @@ class Cracker:
                             fds.append(client)
 
                             print(f"Connection from {address[0]} has been established!")
+                            start_time = time.time()
                             client_tasks[address] = None
 
                             # Send the dictionary to the client of any remaining users to be cracked
@@ -251,6 +252,11 @@ class Cracker:
                         if not data:
                             self.handle_client_disconnect(distribution_queue, client_tasks, socket)
                             fds.remove(socket)
+
+                            if len(fds) == 1:
+                                end_time = time.time() - start_time
+                                total_time += end_time
+
                             continue
 
                         # Client needs more passwords
@@ -267,10 +273,11 @@ class Cracker:
                             continue
 
                         # Client has found the password
-                        end_time = time.time()
+                        end_time = time.time() - start_time
+                        total_time += end_time
 
                         self.users_found[user] = pickle.loads(data)
-                        self.users_found[user]["time"] = round(end_time - start_time, 1)
+                        self.users_found[user]["time"] = total_time
 
                         found = True
                         break

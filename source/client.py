@@ -145,7 +145,7 @@ def main():
     processes = []
 
     try:
-        for _ in range(4):
+        for _ in range(multiprocessing.cpu_count()):
             p = multiprocessing.Process(target=CrackerClient(args.server, args.port).run)
             p.start()
             processes.append(p)
@@ -154,7 +154,7 @@ def main():
             p.join()
     except KeyboardInterrupt:
         print(CrackerClient.KEYBOARD_ERR)
-        
+
         for p in processes:
             p.terminate()
 
