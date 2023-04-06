@@ -3,6 +3,7 @@ import argparse
 import pickle
 import crypt
 import sys
+import multiprocessing
 
 
 class CrackerClient:
@@ -141,8 +142,15 @@ def main():
     args = parser.parse_args()
 
     # Run the client
-    client = CrackerClient(args.server, args.port)
-    client.run()
+    processes = []
+
+    for _ in range(4):
+        p = multiprocessing.Process(target=CrackerClient(args.server, args.port).run)
+        p.start()
+        processes.append(p)
+    
+    for p in processes:
+        p.join()
 
 
 if __name__ == "__main__":
