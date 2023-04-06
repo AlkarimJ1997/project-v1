@@ -144,13 +144,19 @@ def main():
     # Run the client
     processes = []
 
-    for _ in range(4):
-        p = multiprocessing.Process(target=CrackerClient(args.server, args.port).run)
-        p.start()
-        processes.append(p)
-    
-    for p in processes:
-        p.join()
+    try:
+        for _ in range(4):
+            p = multiprocessing.Process(target=CrackerClient(args.server, args.port).run)
+            p.start()
+            processes.append(p)
+        
+        for p in processes:
+            p.join()
+    except KeyboardInterrupt:
+        print(CrackerClient.KEYBOARD_ERR)
+        
+        for p in processes:
+            p.terminate()
 
 
 if __name__ == "__main__":
