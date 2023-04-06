@@ -278,7 +278,7 @@ class Cracker:
                         total_time += end_time
 
                         self.users_found[user] = pickle.loads(data)
-                        self.users_found[user]["time"] = total_time
+                        self.users_found[user]["time"] = round(total_time, 1)
 
                         found = True
                         break
