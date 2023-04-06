@@ -225,6 +225,7 @@ class Cracker:
                 password_generator = self.generate_passwords()
                 distribution_queue = queue.LifoQueue()
                 total_time = 0
+                start_time = time.time()
 
                 while not found:
                     ready_sockets, _, _ = select.select(fds, [], [], 0.1)
