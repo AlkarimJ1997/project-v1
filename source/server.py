@@ -198,7 +198,7 @@ class Cracker:
     def handle_client_disconnect(self, distribution_queue, client_tasks, socket):
         client = socket.getpeername()
 
-        print(f"Connection from {client[0]} has been terminated!")
+        print(f"Connection from {client} has been terminated!")
 
         if client_tasks[client]:
             distribution_queue.put(client_tasks[client])
@@ -236,7 +236,7 @@ class Cracker:
                             client, address = self.sock.accept()
                             fds.append(client)
 
-                            print(f"Connection from {address[0]} has been established!")
+                            print(f"Connection from {address} has been established!")
                             start_time = time.time()
                             client_tasks[address] = None
 
