@@ -59,7 +59,10 @@ class CrackerClient:
             sys.exit(0)
 
     def send_data(self, data):
-        self.sock.sendall(pickle.dumps(data))
+        try:
+            self.sock.sendall(pickle.dumps(data))
+        except BrokenPipeError:
+            pass
 
     def wait(self):
         self.sock.settimeout(None)
