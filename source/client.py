@@ -83,7 +83,6 @@ class CrackerClient:
             server_data = self.receive_data()
 
             if not server_data:
-                print("No data received")
                 break
 
             identifier, salt, hash, entry = user_info.values()
@@ -132,8 +131,6 @@ class CrackerClient:
 
                 if self.found:
                     self.wait()
-
-            print("Done")
         except KeyboardInterrupt:
             print(self.KEYBOARD_ERR)
 
