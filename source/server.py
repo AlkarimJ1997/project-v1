@@ -303,15 +303,15 @@ class Cracker:
                 return
 
             self.brute_force()
+            self.display_cracked_users()
         except KeyboardInterrupt:
             print(self.KEYBOARD_ERR)
+            self.display_cracked_users()
         except FileNotFoundError:
             print("\nFile not found. Please check the path to the shadow file.\n")
         except PermissionError:
             print("\nPermission denied. You do not have adequate permissions to read the shadow file.")
             print("Try running the program as root.\n")
-        finally:
-            self.display_cracked_users()
 
 
 def main():
