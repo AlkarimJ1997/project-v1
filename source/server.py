@@ -16,8 +16,6 @@ class Server:
     ALPHA_NUM = ALPHABET + string.digits
     CHARS = ALPHA_NUM + string.punctuation
 
-    DICT_PATH = os.path.join(os.path.dirname(__file__), "dictionaries")
-
     # Output Messages
     NO_USERS = [
         "\n+--------------------------------+\n",
