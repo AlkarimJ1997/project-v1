@@ -68,9 +68,9 @@ class Cracker:
         self.sock.bind((self.host, port))
         self.sock.listen(5)
 
-        print("\n+---------------------------------------------+")
+        print("\n+--------------------------------------------+")
         print(f"|Server started at {self.host} on port {port}  |")
-        print("+---------------------------------------------+\n")
+        print("+--------------------------------------------+\n")
 
     def define_character_set(self, alpha, alpha_num):
         if alpha:
@@ -186,12 +186,12 @@ class Cracker:
         tries = pickle.loads(data)
 
         self.client_tries += tries
-    
+
     def notify_all_clients(self, sockets, user):
         for socket in sockets:
             socket.sendall(self.encode_bytes("NEXT"))
             self.accumulate_tries(socket)
-        
+
         self.users_found[user]["tries"] = self.client_tries
         self.client_tries = 0
 
@@ -205,12 +205,12 @@ class Cracker:
 
         socket.close()
         client_tasks.pop(client)
-    
+
     def close(self, sockets):
         for socket in sockets:
             socket.sendall(self.encode_bytes("FIN"))
             socket.close()
-        
+
         self.sock.close()
 
     def brute_force(self):
@@ -286,7 +286,7 @@ class Cracker:
                 # If there are still more users to crack, notify all clients to move on to the next user
                 if not all(self.users_found.values()):
                     self.notify_all_clients(fds[1:], user)
-            
+
             # Close all sockets
             self.close(fds[1:])
         except KeyboardInterrupt:
@@ -301,7 +301,7 @@ class Cracker:
             if not self.crack_dict:
                 print("".join(self.DOESNT_EXIST))
                 return
-            
+
             self.brute_force()
         except KeyboardInterrupt:
             print(self.KEYBOARD_ERR)
