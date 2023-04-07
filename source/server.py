@@ -3,7 +3,6 @@ import itertools
 import argparse
 import queue
 import time
-import os
 import socket
 import psutil
 import select
