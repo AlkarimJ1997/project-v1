@@ -20,6 +20,7 @@ class CrackerClient:
         "$3$": "NTHASH",
         "$5$": "SHA-256",
         "$6$": "SHA-512",
+        "$sha1$": "SHA-1",
         "$7$": "scrypt",
         "$md5$": "SunMD5",
     }
