@@ -11,7 +11,7 @@ import pickle
 import itertools
 
 
-class Cracker:
+class Server:
     ALPHABET = string.ascii_letters
     ALPHA_NUM = ALPHABET + string.digits
     CHARS = ALPHA_NUM + string.punctuation
@@ -327,9 +327,9 @@ def main():
     if args.alpha and args.alpha_num:
         parser.error("You must specify only 1 character set (--alpha or --alpha_num). Use -h for more info.")
 
-    # Run the cracker
-    cracker = Cracker(args.file, args.users, args.alpha, args.alpha_num, args.port)
-    cracker.run()
+    # Run the server
+    server = Server(args.file, args.users, args.alpha, args.alpha_num, args.port)
+    server.run()
 
 
 if __name__ == "__main__":

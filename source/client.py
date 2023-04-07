@@ -6,7 +6,7 @@ import sys
 import multiprocessing
 
 
-class CrackerClient:
+class Client:
     IDENTIFIERS = {
         "": "DES",
         "$y$": "yescrypt",
@@ -160,14 +160,14 @@ def main():
 
     try:
         for _ in range(multiprocessing.cpu_count()):
-            p = multiprocessing.Process(target=CrackerClient(args.server, args.port).run)
+            p = multiprocessing.Process(target=Client(args.server, args.port).run)
             p.start()
             processes.append(p)
 
         for p in processes:
             p.join()
     except KeyboardInterrupt:
-        print(CrackerClient.KEYBOARD_ERR)
+        print(Client.KEYBOARD_ERR)
 
         for p in processes:
             p.terminate()
