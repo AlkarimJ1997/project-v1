@@ -185,7 +185,8 @@ class Cracker:
         data = socket.recv(1024)
         tries = pickle.loads(data)
 
-        self.client_tries += tries
+        if isinstance(tries, int):
+            self.client_tries += tries
 
     def notify_all_clients(self, sockets, user):
         for socket in sockets:
