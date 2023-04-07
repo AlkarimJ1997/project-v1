@@ -144,6 +144,16 @@ def main():
     parser.add_argument("-p", "--port", help="Port to connect to", type=int, required=True)
     args = parser.parse_args()
 
+    # If args.server is not a valid IP address, throw an error
+    try:
+        socket.inet_aton(args.server)
+    except OSError:
+        parser.error("Invalid IP address")
+    
+    # If args.port is not a valid port, throw an error
+    if args.port < 0 or args.port > 65535:
+        parser.error("Invalid port")
+
     # Run the client
     processes = []
 
