@@ -52,6 +52,23 @@ class CrackerClient:
     def send_data(self, data):
         self.sock.sendall(pickle.dumps(data))
     
+    def check_for_message(self):
+        try:
+            msg = self.receive_data()
+
+            if msg == "NEXT":
+                self.send_data(self.tries)
+                return True
+
+            if msg == "FIN":
+                self.send_data(self.tries)
+                self.sock.close()
+                sys.exit(0)
+        except BlockingIOError:
+            pass
+
+        return False
+    
     def wait(self):
         self.sock.settimeout(None)
 
@@ -97,19 +114,12 @@ class CrackerClient:
                     return
                 
                 # Check for a NEXT or FIN message
-                try:
-                    msg = self.receive_data()
+                if self.check_for_message():
+                    return
 
-                    if msg == "NEXT":
-                        self.send_data(self.tries)
-                        return
-
-                    if msg == "FIN":
-                        self.send_data(self.tries)
-                        self.sock.close()
-                        sys.exit(0)
-                except BlockingIOError:
-                    pass
+            # Check if the server has sent a NEXT or FIN message
+            if self.check_for_message():
+                return
 
             # Send a need more passwords message back to the server
             self.sock.sendall(pickle.dumps("MORE"))
