@@ -108,7 +108,7 @@ class Client:
 
                     if msg == "NEXT":
                         self.send_data(self.tries)
-                        return True
+                        return
 
                     if msg == "FIN":
                         self.send_data(self.tries)
@@ -153,7 +153,7 @@ def main():
         socket.inet_aton(args.server)
     except OSError:
         parser.error("Invalid IP address")
-    
+
     # If args.port is not a valid port, throw an error
     if args.port < 0 or args.port > 65535:
         parser.error("Invalid port")
