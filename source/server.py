@@ -148,8 +148,6 @@ class Server:
         self.users_found = {user: self.users_found[user] for user in self.users_found if self.users_found[user]}
 
         for user in self.users_found:
-            dict = self.users_found[user].pop("dictionary", None)
-
             password, algo, salt, hash, tries, time = self.users_found[user].values()
 
             print("\n+" + "-" * (18) + "+")
@@ -162,9 +160,6 @@ class Server:
             print(f"| Hash: {hash}")
             print(f"| Time: {time} seconds")
             print(f"| Tries: {tries:,}")
-
-            if dict:
-                print(f"| Dictionary: {dict}")
 
         print("\n+--------------------+\n")
 

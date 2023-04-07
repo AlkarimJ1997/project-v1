@@ -118,7 +118,10 @@ class Client:
                     pass
 
             # Send a need more passwords message back to the server
-            self.sock.sendall(pickle.dumps("MORE"))
+            try:
+                self.sock.sendall(pickle.dumps("MORE"))
+            except BrokenPipeError:
+                pass
 
     def run(self):
         try:
