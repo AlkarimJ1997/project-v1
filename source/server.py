@@ -45,6 +45,7 @@ class Server:
         self.crack_dict = {}
         self.users_found = {}
         self.client_tries = 0
+        self.user = None
 
         self.define_character_set(alpha, alpha_num)
 
@@ -180,13 +181,17 @@ class Server:
         if isinstance(tries, int):
             self.client_tries += tries
 
-    def notify_all_clients(self, sockets, user):
+    def notify_all_clients(self, sockets, users_list):
         for socket in sockets:
             socket.sendall(self.encode_bytes("NEXT"))
             self.accumulate_tries(socket)
 
-        self.users_found[user]["tries"] = self.client_tries
+        self.users_found[self.user]["tries"] = self.client_tries
         self.client_tries = 0
+        self.user = users_list.pop(0)
+
+        for socket in sockets:
+            socket.sendall(self.encode_bytes({"user": self.user, **self.crack_dict[self.user]}))
 
     def handle_client_disconnect(self, distribution_queue, client_tasks, socket):
         client = socket.getpeername()
@@ -211,9 +216,9 @@ class Server:
             fds = [self.sock]
             users_list = list(self.crack_dict.keys())
             client_tasks = {}
+            self.user = users_list.pop(0)
 
             while not all(self.users_found.values()):
-                user = users_list.pop(0)
                 found = False
                 password_generator = self.generate_passwords()
                 distribution_queue = queue.LifoQueue()
@@ -233,9 +238,8 @@ class Server:
                             start_time = time.time()
                             client_tasks[address] = None
 
-                            # Send the dictionary to the client of any remaining users to be cracked
-                            remaining = {user: self.crack_dict[user] for user in self.crack_dict if not self.users_found[user]}
-                            bytes = self.encode_bytes(remaining)
+                            # Send the dictionary to the client of the user to be cracked
+                            bytes = self.encode_bytes({"user": self.user, **self.crack_dict[self.user]})
                             client.sendall(bytes)
                             continue
 
@@ -270,15 +274,15 @@ class Server:
                         end_time = time.time() - start_time
                         total_time += end_time
 
-                        self.users_found[user] = pickle.loads(data)
-                        self.users_found[user]["time"] = round(total_time, 1)
+                        self.users_found[self.user] = pickle.loads(data)
+                        self.users_found[self.user]["time"] = round(total_time, 1)
 
                         found = True
                         break
 
                 # If there are still more users to crack, notify all clients to move on to the next user
                 if not all(self.users_found.values()):
-                    self.notify_all_clients(fds[1:], user)
+                    self.notify_all_clients(fds[1:], users_list)
 
             # Close all sockets
             self.close(fds[1:])

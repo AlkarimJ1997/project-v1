@@ -55,9 +55,10 @@ class Client:
             data = self.sock.recv(message_size)
 
             return pickle.loads(data) if data else None
-        except ConnectionResetError:
-            self.sock.close()
-            sys.exit(0)
+        except (ConnectionResetError, OSError) as e:
+            if isinstance(e, ConnectionResetError) or (isinstance(e, OSError) and e.errno == 9):
+                self.sock.close()
+                sys.exit(0)
 
     def send_data(self, data):
         try:
@@ -79,7 +80,7 @@ class Client:
                 self.sock.close()
                 return
 
-    def worker(self, user, user_info):
+    def worker(self, user_info):
         self.tries = 0
 
         while True:
@@ -89,7 +90,7 @@ class Client:
             if not server_data:
                 break
 
-            identifier, salt, hash, entry = user_info.values()
+            user, identifier, salt, hash, entry = user_info.values()
             self.sock.settimeout(0)
 
             for password in server_data:
@@ -107,6 +108,7 @@ class Client:
                     msg = self.receive_data()
 
                     if msg == "NEXT":
+                        self.sock.settimeout(None)
                         self.send_data(self.tries)
                         return
 
@@ -125,16 +127,11 @@ class Client:
 
     def run(self):
         try:
-            self.user_info = self.receive_data()
-
-            if not self.user_info:
-                print("No user info received")
-                return
-
-            for user in self.user_info:
+            while True:
                 self.found = False
+                self.user_info = self.receive_data()
                 self.send_data("ACK")
-                self.worker(user, self.user_info[user])
+                self.worker(self.user_info)
 
                 if self.found:
                     self.wait()
