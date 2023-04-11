@@ -278,6 +278,11 @@ class Server:
                         self.users_found[self.user]["time"] = round(total_time, 1)
 
                         found = True
+
+                        # Clear the distribution queue
+                        while not distribution_queue.empty():
+                            distribution_queue.get()
+
                         break
 
                 # If there are still more users to crack, notify all clients to move on to the next user
